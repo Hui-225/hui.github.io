@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>关心你的心</title>
+  <!-- 引入Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- 配置Tailwind -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            love: {
+              light: '#ffccd5',
+              DEFAULT: '#ff6b8b',
+              dark: '#e63950'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .heart-position {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .heart-position.visible {
+        opacity: 1;
+      }
+    }
+  </style>
+  
+  <style>
+    body {
+      background-color: #fff5f7;
+      overflow-x: hidden;
+    }
+    
+    .heart-container {
+      position: relative;
+      width: 500px;
+      height: 450px;
+      margin: 50px auto;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .github-link:hover {
+      animation: pulse 1.5s infinite;
+    }
+    
+    .footer {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start pt-8">
+  <header class="text-center mb-8">
+    <h1 class="text-[clamp(1.8rem,5vw,3rem)] font-bold text-love-dark text-shadow">
+      给你的关心
+    </h1>
+    <p class="text-gray-600 mt-2 text-lg">慢慢点击下方按钮，接收我的心意吧</p>
+  </header>
+  
+  <div class="heart-container"></div>
+  
+  <div class="mt-8 text-center">
+    <button id="startBtn" class="bg-love hover:bg-love-dark text-white font-medium py-3 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-love-light">
+      <i class="fa fa-heart mr-2"></i>开始接收关心
+    </button>
+  </div>
+  
+  <div class="footer">
+    <a href="https://github.com/你的用户名/你的仓库名" target="_blank" rel="noopener noreferrer" class="github-link inline-flex items-center text-gray-600 hover:text-love-dark transition-colors duration-300">
+      <i class="fa fa-github text-2xl mr-2"></i>
+      <span>查看GitHub项目</span>
+    </a>
+  </div>
+
+  <script>
+    // 关心语列表
+    const messages = [
+      "记得按时吃饭哦",
+      "今天也要保持微笑呀",
+      "累了就休息一下吧",
+      "天气变化记得添衣",
+      "你真的很棒",
+      "别给自己太大压力",
+      "多喝水对身体好",
+      "晚上早点休息",
+      "有我在呢",
+      "照顾好自己",
+      "我一直在想你",
+      "你的努力我都看到了",
+      "别担心，一切都会好的",
+      "你值得被好好对待",
+      "每天都要开开心心",
+      "遇到困难可以告诉我",
+      "你一笑，世界都亮了",
+      "好好爱自己",
+      "今天也辛苦啦",
+      "我会一直支持你",
+      "别熬夜，对身体不好",
+      "不管怎样，我都在",
+      "你是独一无二的",
+      "多给自己一点鼓励",
+      "生活因你而美好",
+      "放轻松，慢慢来",
+      "记得每天都要开心",
+      "你真的很优秀",
+      "注意身体，别太累",
+      "有你真好"
+    ];
+    
+    // 生成心形坐标的函数
+    function generateHeartCoordinates(numPoints) {
+      const points = [];
+      const scale = 180; // 缩放因子
+      const centerX = 250; // 容器中心X
+      const centerY = 220; // 容器中心Y
+      
+      for (let i = 0; i < numPoints; i++) {
+        const t = (i / numPoints) * Math.PI * 2;
+        
+        // 心形曲线参数方程
+        const x = 16 * Math.pow(Math.sin(t), 3);
+        const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+        
+        // 转换为容器坐标并添加一些随机变化使分布更自然
+        const pointX = centerX + x * scale / 16 + (Math.random() - 0.5) * 20;
+        const pointY = centerY - y * scale / 16 + (Math.random() - 0.5) * 20;
+        
+        points.push({ x: pointX, y: pointY });
+      }
+      
+      return points;
+    }
+    
+    // 创建心形文字元素
+    function createHeartText() {
+      const container = document.querySelector('.heart-container');
+      container.innerHTML = ''; // 清空容器
+      
+      const coordinates = generateHeartCoordinates(messages.length);
+      
+      messages.forEach((msg, index) => {
+        const coord = coordinates[index];
+        const span = document.createElement('span');
+        span.className = 'heart-position px-2 py-1 rounded-full bg-love-light text-love-dark text-sm md:text-base font-medium';
+        span.style.left = `${coord.x}px`;
+        span.style.top = `${coord.y}px`;
+        span.style.fontSize = `${12 + Math.random() * 6}px`;
+        span.textContent = msg;
+        container.appendChild(span);
+      });
+    }
+    
+    // 逐个显示文字
+    function showTextsSequentially() {
+      const elements = document.querySelectorAll('.heart-position');
+      elements.forEach((el, index) => {
+        setTimeout(() => {
+          el.classList.add('visible');
+        }, index * 200); // 每个文字间隔200ms显示
+      });
+    }
+    
+    // 初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      createHeartText();
+      
+      document.getElementById('startBtn').addEventListener('click', () => {
+        createHeartText();
+        setTimeout(showTextsSequentially, 300);
+      });
+    });
+    
+    // 响应窗口大小变化
+    window.addEventListener('resize', createHeartText);
+  </script>
+</body>
+</html>
