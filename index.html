@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>关心你的心</title>
+  <title>信</title>
   <!-- 引入Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- 引入Font Awesome -->
@@ -54,7 +54,8 @@
     
     .heart-container {
       position: relative;
-      width: 500px;
+      width: 90vw;
+      max-width: 500px;
       height: 450px;
       margin: 50px auto;
     }
@@ -78,27 +79,22 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-start pt-8">
-  <header class="text-center mb-8">
-    <h1 class="text-[clamp(1.8rem,5vw,3rem)] font-bold text-love-dark text-shadow">
-      给你的关心
-    </h1>
-    <p class="text-gray-600 mt-2 text-lg">慢慢点击下方按钮，接收我的心意吧</p>
-  </header>
-  
-  <div class="heart-container"></div>
-  
-  <div class="mt-8 text-center">
-    <button id="startBtn" class="bg-love hover:bg-love-dark text-white font-medium py-3 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-love-light">
-      <i class="fa fa-heart mr-2"></i>开始接收关心
-    </button>
-  </div>
-  
-  <div class="footer">
-    <a href="https://github.com/你的用户名/你的仓库名" target="_blank" rel="noopener noreferrer" class="github-link inline-flex items-center text-gray-600 hover:text-love-dark transition-colors duration-300">
-      <i class="fa fa-github text-2xl mr-2"></i>
-      <span>查看GitHub项目</span>
-    </a>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+  <div class="w-full max-w-2xl mx-auto flex flex-col items-center">
+    <header class="text-center mb-8">
+      <h1 class="text-[clamp(1.8rem,5vw,3rem)] font-bold text-love-dark text-shadow">
+        寄一封
+      </h1>
+      <p class="text-gray-600 mt-2 text-lg">亲启</p>
+    </header>
+    
+    <div class="heart-container mx-auto"></div>
+    
+    <div class="mt-8 text-center">
+      <button id="startBtn" class="bg-love hover:bg-love-dark text-white font-medium py-3 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-love-light">
+        <i class="fa fa-heart mr-2"></i>在这呢
+      </button>
+    </div>
   </div>
 
   <script>
@@ -136,23 +132,25 @@
       "有你真好"
     ];
     
-    // 生成心形坐标的函数
+    // 生成心形坐标的函数（保持对称性）
     function generateHeartCoordinates(numPoints) {
       const points = [];
-      const scale = 180; // 缩放因子
-      const centerX = 250; // 容器中心X
+      const container = document.querySelector('.heart-container');
+      const containerWidth = container.offsetWidth;
+      const scale = Math.min(containerWidth / 2.8, 180); // 根据容器宽度动态调整缩放
+      const centerX = containerWidth / 2; // 容器中心X（确保水平居中）
       const centerY = 220; // 容器中心Y
       
       for (let i = 0; i < numPoints; i++) {
         const t = (i / numPoints) * Math.PI * 2;
         
-        // 心形曲线参数方程
+        // 心形曲线参数方程（保证对称基础）
         const x = 16 * Math.pow(Math.sin(t), 3);
         const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
         
-        // 转换为容器坐标并添加一些随机变化使分布更自然
-        const pointX = centerX + x * scale / 16 + (Math.random() - 0.5) * 20;
-        const pointY = centerY - y * scale / 16 + (Math.random() - 0.5) * 20;
+        // 转换为容器坐标并添加轻微随机变化，保持整体对称性
+        const pointX = centerX + x * scale / 16 + (Math.random() - 0.5) * 15;
+        const pointY = centerY - y * scale / 16 + (Math.random() - 0.5) * 15;
         
         points.push({ x: pointX, y: pointY });
       }
@@ -199,7 +197,7 @@
       });
     });
     
-    // 响应窗口大小变化
+    // 响应窗口大小变化，保持居中对称
     window.addEventListener('resize', createHeartText);
   </script>
 </body>
