@@ -54,10 +54,11 @@
     
     .heart-container {
       position: relative;
-      width: 90vw;
+      width: 100%;
       max-width: 500px;
-      height: 450px;
-      margin: 50px auto;
+      height: 0;
+      padding-bottom: 90%; /* 使用padding-bottom保持宽高比，确保对称 */
+      margin: 0 auto;
     }
     
     @keyframes pulse {
@@ -80,22 +81,22 @@
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
-  <div class="w-full max-w-2xl mx-auto flex flex-col items-center">
-    <header class="text-center mb-8">
-      <h1 class="text-[clamp(1.8rem,5vw,3rem)] font-bold text-love-dark text-shadow">
-        寄一封
-      </h1>
-      <p class="text-gray-600 mt-2 text-lg">亲启</p>
-    </header>
-    
-    <div class="heart-container mx-auto"></div>
-    
-    <div class="mt-8 text-center">
-      <button id="startBtn" class="bg-love hover:bg-love-dark text-white font-medium py-3 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-love-light">
-        <i class="fa fa-heart mr-2"></i>在这呢
-      </button>
-    </div>
+  <div class="w-full max-w-md mx-auto text-center mb-8">
+    <h1 class="text-[clamp(1.8rem,5vw,3rem)] font-bold text-love-dark text-shadow">
+      寄一封
+    </h1>
+    <p class="text-gray-600 mt-2 text-lg">亲启</p>
   </div>
+  
+  <div class="heart-container mx-auto"></div>
+  
+  <div class="mt-8 text-center w-full max-w-md mx-auto">
+    <button id="startBtn" class="bg-love hover:bg-love-dark text-white font-medium py-3 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-love-light">
+      <i class="fa fa-heart mr-2"></i>在这呢
+    </button>
+  </div>
+  
+
 
   <script>
     // 关心语列表
@@ -132,23 +133,26 @@
       "有你真好"
     ];
     
-    // 生成心形坐标的函数（保持对称性）
+    // 生成心形坐标的函数
     function generateHeartCoordinates(numPoints) {
       const points = [];
+      // 调整缩放因子使爱心更适合各种屏幕
       const container = document.querySelector('.heart-container');
-      const containerWidth = container.offsetWidth;
-      const scale = Math.min(containerWidth / 2.8, 180); // 根据容器宽度动态调整缩放
-      const centerX = containerWidth / 2; // 容器中心X（确保水平居中）
-      const centerY = 220; // 容器中心Y
+      const containerWidth = container.offsetWidth || 500;
+      const scale = containerWidth * 0.36; // 基于容器宽度的比例缩放
+      
+      // 容器中心始终在正中央
+      const centerX = containerWidth / 2;
+      const centerY = (containerWidth * 0.9) / 2; // 基于padding-bottom的90%比例
       
       for (let i = 0; i < numPoints; i++) {
         const t = (i / numPoints) * Math.PI * 2;
         
-        // 心形曲线参数方程（保证对称基础）
+        // 心形曲线参数方程
         const x = 16 * Math.pow(Math.sin(t), 3);
         const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
         
-        // 转换为容器坐标并添加轻微随机变化，保持整体对称性
+        // 转换为容器坐标并添加一些随机变化使分布更自然
         const pointX = centerX + x * scale / 16 + (Math.random() - 0.5) * 15;
         const pointY = centerY - y * scale / 16 + (Math.random() - 0.5) * 15;
         
@@ -171,7 +175,10 @@
         span.className = 'heart-position px-2 py-1 rounded-full bg-love-light text-love-dark text-sm md:text-base font-medium';
         span.style.left = `${coord.x}px`;
         span.style.top = `${coord.y}px`;
-        span.style.fontSize = `${12 + Math.random() * 6}px`;
+        // 根据容器大小动态调整字体
+        const containerWidth = container.offsetWidth || 500;
+        const fontSize = 8 + (containerWidth / 500) * 6;
+        span.style.fontSize = `${fontSize}px`;
         span.textContent = msg;
         container.appendChild(span);
       });
@@ -189,7 +196,8 @@
     
     // 初始化
     document.addEventListener('DOMContentLoaded', () => {
-      createHeartText();
+      // 确保DOM加载完成后再初始化
+      setTimeout(createHeartText, 100);
       
       document.getElementById('startBtn').addEventListener('click', () => {
         createHeartText();
